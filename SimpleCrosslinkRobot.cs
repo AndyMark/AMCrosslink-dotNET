@@ -12,20 +12,12 @@ namespace com.andymark.crosslink
         protected Toucan toucan;
         private Timer timer;
         
-        public SimpleCrosslinkRobot(String ip, int nodeId)
+        public SimpleCrosslinkRobot(IPAddress ip, int nodeId)
         {
-            toucan = new Toucan(IPAddress.Parse(ip));
+            toucan = new Toucan(ip);
             timer = new Timer(50);
             timer.Elapsed += new ElapsedEventHandler(periodic);
             timer.Enabled = true;
-        }
-
-        public double getBatteryVoltage()
-        {
-            uint raw = 0;
-            // TODO DLL.CTR_GetADC(dllHandle, DLL.Node.RCM, 1, 7, ref raw);
-            double dVal = ((int) raw) * 0.02745703125; // * 3.3/1024 * ( 70 + 5.2 + 10) /  ( 10)
-            return dVal;
         }
 
         public State State

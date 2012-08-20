@@ -17,6 +17,11 @@ namespace com.andymark.crosslink
             packet.NodeId = id;
         }
 
+        public void SetNodeId(int id)
+        {
+            packet.NodeId = id;
+        }
+
         public byte[] GetBuffer()
         {
             return packet.GetBuffer();
