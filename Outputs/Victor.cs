@@ -13,6 +13,7 @@ namespace com.andymark.crosslink
         {
             this.canipede = canipede;
             this.pwmChannel = pwmChannel;
+            Throttle = 0;
         }
 
         public double Throttle

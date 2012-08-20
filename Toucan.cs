@@ -14,9 +14,9 @@ namespace com.andymark.crosslink
     public class Toucan
     {
         private Timer tx_timer;
-        private Timer rx_timer;
-        private Socket rx_socket;
         private IPEndPoint tx_dest;
+        private Socket rx_socket;
+        private byte[] rx_buffer;
         private JaguarPacket jaguarPacket;
         private EnablePacket enablePacket;
         private StatusPacket statusPacket;
@@ -31,14 +31,13 @@ namespace com.andymark.crosslink
 
             tx_dest = new IPEndPoint(addr, 1217);
 
+            rx_buffer = new byte[62];
             rx_socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            rx_socket.ReceiveTimeout = 1000;
             rx_socket.Bind(new IPEndPoint(IPAddress.Any, 1218));
-            
-            rx_timer = new Timer(50);
-            rx_timer.Elapsed += new ElapsedEventHandler(ReceivePackets);
-            rx_timer.Enabled = true;
+            rx_socket.BeginReceive(rx_buffer, 0, rx_buffer.Length, SocketFlags.None, ReceivePacket, null);
 
-            tx_timer = new Timer(50);
+            tx_timer = new System.Timers.Timer(50);
             tx_timer.Elapsed += new ElapsedEventHandler(SendPackets);
             tx_timer.Enabled = true;
         }
@@ -70,11 +69,10 @@ namespace com.andymark.crosslink
             tx_client.Close();
         }
 
-        private void ReceivePackets(object source, ElapsedEventArgs e)
+        private void ReceivePacket(IAsyncResult ar)
         {
-            byte[] buffer = new byte[62];
-            rx_socket.Receive(buffer);
-            statusPacket = StatusPacket.ParseFromBuffer(buffer);
+            statusPacket = StatusPacket.ParseFromBuffer(rx_buffer);
+            rx_socket.BeginReceive(rx_buffer, 0, rx_buffer.Length, SocketFlags.None, ReceivePacket, null);
         }
 
         public State State
@@ -114,7 +112,7 @@ namespace com.andymark.crosslink
             return statusPacket.quad_in[encoderChannel - 1];
         }
 
-        public int GetEncoderVelocity(int encoderChannel)
+        public int GetEncoderRate(int encoderChannel)
         {
             return statusPacket.velocity_in[encoderChannel - 1];
         }
