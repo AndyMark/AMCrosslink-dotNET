@@ -15,7 +15,7 @@ namespace com.andymark.crosslink
             this.channel = channel;
         }
 
-        public double Revolutions
+        public double Position
         {
             get
             {
@@ -23,11 +23,11 @@ namespace com.andymark.crosslink
             }
         }
 
-        public double Velocity
+        public double Rate
         {
             get
             {
-                return toucan.GetEncoderPosition(channel);
+                return toucan.GetEncoderRate(channel);
             }
         }
     }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace com.andymark.crosslink.Inputs
+namespace com.andymark.crosslink
 {
     public class AnalogInput
     {
