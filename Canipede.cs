@@ -31,5 +31,10 @@ namespace com.andymark.crosslink
         {
             packet.SetSolenoidValue(channel, value);
         }
+
+        public void SetRelayValue(int channel, RelayState state)
+        {
+            packet.SetRelayState(channel, state);
+        }
     }
 }

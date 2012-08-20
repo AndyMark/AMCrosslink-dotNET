@@ -17,7 +17,10 @@ namespace com.andymark.crosslink
 
         public RelayState State
         {
-            set { }
+            set
+            {
+                canipede.SetRelayValue(channel, value);
+            }
         }
     }
 

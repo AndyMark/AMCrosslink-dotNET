@@ -56,5 +56,24 @@ namespace com.andymark.crosslink
         {
             solenoid[channel - 1] = (byte) (value ? 1 : 0);
         }
+
+        public void SetRelayState(int channel, RelayState state)
+        {
+            byte x;
+            switch (state)
+            {
+                case RelayState.Forward:
+                    x = 1;
+                    break;
+                case RelayState.Reverse:
+                    x = 2;
+                    break;
+                case RelayState.Neutral:
+                default:
+                    x = 0;
+                    break;
+            }
+            relay[channel - 1] = x;
+        }
     }
 }
