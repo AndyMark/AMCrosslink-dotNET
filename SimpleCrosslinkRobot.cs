@@ -40,9 +40,14 @@ namespace com.andymark.crosslink
 
         private void periodic(object source, ElapsedEventArgs e)
         {
-            if (State == State.Teleop)
+            switch (State)
             {
-                teleop();
+                case crosslink.State.Disabled:
+                    disabled();
+                    break;
+                case crosslink.State.Teleop:
+                    teleop();
+                    break;
             }
         }
 
