@@ -120,8 +120,13 @@ namespace com.andymark.crosslink
 
     public enum State
     {
+        /// <summary>
+        /// Robot is disabled.  All outputs should be neutral.
+        /// </summary>
         Disabled,
-        Teleop,
-        Auto
+        /// <summary>
+        /// Robot is enabled for remote control.  Outputs are enabled.
+        /// </summary>
+        Teleop
     }
 }
