@@ -17,27 +17,22 @@ namespace com.andymark.crosslink
             packet.NodeId = id;
         }
 
-        public void SetNodeId(int id)
-        {
-            packet.NodeId = id;
-        }
-
-        public byte[] GetBuffer()
+        internal byte[] GetBuffer()
         {
             return packet.GetBuffer();
         }
 
-        public void SetPWMValue(int channel, UInt16 value)
+        internal void SetPWMValue(int channel, UInt16 value)
         {
             packet.SetPWMValue(channel, value);
         }
 
-        public void SetSolenoidValue(int channel, bool value)
+        internal void SetSolenoidValue(int channel, bool value)
         {
             packet.SetSolenoidValue(channel, value);
         }
 
-        public void SetRelayValue(int channel, RelayState state)
+        internal void SetRelayValue(int channel, RelayState state)
         {
             packet.SetRelayState(channel, state);
         }

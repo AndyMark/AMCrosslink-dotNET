@@ -12,6 +12,11 @@ namespace com.andymark.crosslink
         private Toucan toucan;
         int channel;
 
+        /// <summary>
+        /// Initializes a new instance of the AnalogInput class for the specified 2CAN and input channel.
+        /// </summary>
+        /// <param name="toucan">The Toucan instance associated with this analog input</param>
+        /// <param name="channel">The CANipede channel used (1-8).</param>
         public AnalogInput(Toucan toucan, int channel)
         {
             this.toucan = toucan;

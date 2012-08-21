@@ -4,11 +4,19 @@ using System.Text;
 
 namespace com.andymark.crosslink
 {
+    /// <summary>
+    /// Represents a Victor 883/884 motor controller.
+    /// </summary>
     public class Victor : SpeedController
     {
         private Canipede canipede;
-        int pwmChannel;
+        private int pwmChannel;
 
+        /// <summary>
+        /// Initializes a new instance of the Victor class for the specified CANipede and PWM channel.
+        /// </summary>
+        /// <param name="canipede">The CANipede instance associated with this Victor.</param>
+        /// <param name="pwmChannel">The PWM output channel for this Victor (1-8).</param>
         public Victor(Canipede canipede, int pwmChannel)
         {
             this.canipede = canipede;
@@ -16,6 +24,11 @@ namespace com.andymark.crosslink
             Throttle = 0;
         }
 
+        /// <summary>
+        /// Sets the throttle output of the SpeedController.
+        /// The throttle value is a floating point number, where
+        /// 1 is full forward, -1 is full reverse, and 0 is neutral.
+        /// </summary>
         public double Throttle
         {
             set

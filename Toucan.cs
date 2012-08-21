@@ -22,6 +22,10 @@ namespace com.andymark.crosslink
         private StatusPacket statusPacket;
         private Dictionary<int, Canipede> canipedes;
 
+        /// <summary>
+        /// Initializes a new instance of the Toucan class.
+        /// </summary>
+        /// <param name="addr">The IP address of the 2CAN device.</param>
         public Toucan(IPAddress addr)
         {
             canipedes = new Dictionary<int, Canipede>();
@@ -75,12 +79,20 @@ namespace com.andymark.crosslink
             rx_socket.BeginReceive(rx_buffer, 0, rx_buffer.Length, SocketFlags.None, ReceivePacket, null);
         }
 
+        /// <summary>
+        /// Gets or sets the state of the control system.
+        /// </summary>
         public State State
         {
             get { return enablePacket.State; }
             set { enablePacket.State = value; }
         }
 
+        /// <summary>
+        /// Gets the Canipede instance associated with the specified CAN ID.
+        /// </summary>
+        /// <param name="nodeId">The CAN ID where the CANipede is located</param>
+        /// <returns>A Canipede instance</returns>
         public Canipede GetCanipede(int nodeId)
         {
             if (!canipedes.ContainsKey(nodeId))
@@ -91,33 +103,36 @@ namespace com.andymark.crosslink
             return canipedes[nodeId];
         }
 
-        public void SetJaguar(int jaguar, UInt16 value)
+        internal void SetJaguar(int jaguar, UInt16 value)
         {
             jaguarPacket.SetJaguarValue(jaguar, value);
         }
 
-        public UInt16 GetAnalogRaw(int channel)
+        internal UInt16 GetAnalogRaw(int channel)
         {
             return statusPacket.analog_in[channel - 1];
         }
 
-        public bool GetGPIO(int channel)
+        internal bool GetGPIO(int channel)
         {
             byte bitmask = (byte) (0x1 << (channel - 1));
             return (statusPacket.gpio_in & bitmask) != 0;
         }
 
-        public int GetEncoderPosition(int encoderChannel)
+        internal int GetEncoderPosition(int encoderChannel)
         {
             return statusPacket.quad_in[encoderChannel - 1];
         }
 
-        public int GetEncoderRate(int encoderChannel)
+        internal int GetEncoderRate(int encoderChannel)
         {
             return statusPacket.velocity_in[encoderChannel - 1];
         }
     }
 
+    /// <summary>
+    /// Represents the state of a robot.
+    /// </summary>
     public enum State
     {
         /// <summary>

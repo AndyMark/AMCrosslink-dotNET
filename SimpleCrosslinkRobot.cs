@@ -7,12 +7,21 @@ using System.Timers;
 
 namespace com.andymark.crosslink
 {
+    /// <summary>
+    /// A simple robot base class.
+    /// </summary>
+    /// You can build a robot program from this class by overriding the
+    /// teleop() and disabled() methods.
     public abstract class SimpleCrosslinkRobot
     {
+        /// <summary>
+        /// The Toucan associated with this robot.
+        /// </summary>
         protected Toucan toucan;
         private Timer timer;
         
-        public SimpleCrosslinkRobot(IPAddress ip, int nodeId)
+        /// <param name="ip">The IP address of the 2CAN.</param>
+        public SimpleCrosslinkRobot(IPAddress ip)
         {
             toucan = new Toucan(ip);
             timer = new Timer(50);
@@ -20,13 +29,16 @@ namespace com.andymark.crosslink
             timer.Enabled = true;
         }
 
+        /// <summary>
+        /// Gets or sets the state of the robot.
+        /// </summary>
         public State State
         {
             get { return toucan.State; }
             set { toucan.State = value; }
         }
 
-        public void periodic(object source, ElapsedEventArgs e)
+        private void periodic(object source, ElapsedEventArgs e)
         {
             if (State == State.Teleop)
             {
@@ -34,6 +46,18 @@ namespace com.andymark.crosslink
             }
         }
 
-        public abstract void teleop();        
+        /// <summary>
+        /// Called when the robot is in the Teleop state.
+        /// </summary>
+        public virtual void teleop()
+        {
+        }
+
+        /// <summary>
+        /// Called when the robot is in the Disabled state.
+        /// </summary>
+        public virtual void disabled()
+        {
+        }
     }
 }
