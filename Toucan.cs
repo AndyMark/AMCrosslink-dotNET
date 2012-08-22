@@ -22,6 +22,10 @@ namespace com.andymark.crosslink
         private StatusPacket statusPacket;
         private Dictionary<int, Canipede> canipedes;
 
+        private DateTime lastRx;
+        private ulong rx_count;
+        private ulong tx_count;
+
         /// <summary>
         /// Initializes a new instance of the Toucan class.
         /// </summary>
@@ -44,6 +48,11 @@ namespace com.andymark.crosslink
             tx_timer = new System.Timers.Timer(50);
             tx_timer.Elapsed += new ElapsedEventHandler(SendPackets);
             tx_timer.Enabled = true;
+
+            // initialize statistics
+            lastRx = DateTime.MinValue;
+            rx_count = 0;
+            tx_count = 0;
         }
 
         private void SendPackets(object source, ElapsedEventArgs e)
@@ -71,12 +80,44 @@ namespace com.andymark.crosslink
             }
 
             tx_client.Close();
+            tx_count++;
         }
 
         private void ReceivePacket(IAsyncResult ar)
         {
             statusPacket = StatusPacket.ParseFromBuffer(rx_buffer);
             rx_socket.BeginReceive(rx_buffer, 0, rx_buffer.Length, SocketFlags.None, ReceivePacket, null);
+
+            // update statistics
+            lastRx = DateTime.Now;
+            rx_count++;
+        }
+
+        /// <summary>
+        /// Gets the time interval since the last packet was received from the 2CAN.
+        /// </summary>
+        public TimeSpan TimeSinceLastRx
+        {
+            get
+            {
+                return DateTime.Now - lastRx;
+            }
+        }
+
+        /// <summary>
+        /// Gets the number of packets sent to this 2CAN.
+        /// </summary>
+        public ulong PacketsSent
+        {
+            get { return tx_count; }
+        }
+
+        /// <summary>
+        /// Gets the number of packets received from this 2CAN.
+        /// </summary>
+        public ulong PacketsReceived
+        {
+            get { return rx_count; }
         }
 
         /// <summary>

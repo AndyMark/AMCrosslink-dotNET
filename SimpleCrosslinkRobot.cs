@@ -19,11 +19,14 @@ namespace com.andymark.crosslink
         /// </summary>
         protected Toucan toucan;
         private Timer timer;
+        private AnalogInput battery;
         
         /// <param name="ip">The IP address of the 2CAN.</param>
         public SimpleCrosslinkRobot(IPAddress ip)
         {
             toucan = new Toucan(ip);
+            battery = new AnalogInput(toucan, 8);
+
             timer = new Timer(50);
             timer.Elapsed += new ElapsedEventHandler(periodic);
             timer.Enabled = true;
@@ -36,6 +39,27 @@ namespace com.andymark.crosslink
         {
             get { return toucan.State; }
             set { toucan.State = value; }
+        }
+
+        /// <summary>
+        /// True if we've received a packet from the robot in the last 100 milliseconds.
+        /// </summary>
+        public Boolean ReceivingPackets
+        {
+            get
+            {
+                return toucan.TimeSinceLastRx.TotalMilliseconds < 100;
+            }
+        }
+
+        /// <summary>
+        /// Gets the battery voltage (from analog input 8) when the jumper
+        /// is in place on the CANipede.
+        /// </summary>
+        /// <returns></returns>
+        public double GetBatteryVoltage()
+        {
+            return battery.BatteryVoltage;
         }
 
         private void periodic(object source, ElapsedEventArgs e)
