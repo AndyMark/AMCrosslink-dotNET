@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Timers;
+using System.Threading;
 
 namespace com.andymark.crosslink
 {
@@ -13,6 +13,7 @@ namespace com.andymark.crosslink
     /// </summary>
     public class Toucan
     {
+        private readonly Object ipLock = new Object();
         private Timer tx_timer;
         private IPEndPoint tx_dest;
         private Socket rx_socket;
@@ -37,7 +38,7 @@ namespace com.andymark.crosslink
             enablePacket = new EnablePacket();
             statusPacket = new StatusPacket();
 
-            tx_dest = new IPEndPoint(addr, 1217);
+            ChangeIPAddress(addr);
 
             rx_buffer = new byte[62];
             rx_socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -45,9 +46,7 @@ namespace com.andymark.crosslink
             rx_socket.Bind(new IPEndPoint(IPAddress.Any, 1218));
             rx_socket.BeginReceive(rx_buffer, 0, rx_buffer.Length, SocketFlags.None, ReceivePacket, null);
 
-            tx_timer = new System.Timers.Timer(50);
-            tx_timer.Elapsed += new ElapsedEventHandler(SendPackets);
-            tx_timer.Enabled = true;
+            tx_timer = new Timer(SendPackets, null, 50, 50);
 
             // initialize statistics
             lastRx = DateTime.MinValue;
@@ -55,7 +54,19 @@ namespace com.andymark.crosslink
             tx_count = 0;
         }
 
-        private void SendPackets(object source, ElapsedEventArgs e)
+        /// <summary>
+        /// Changes the IP Address this Toucan object is associated with.
+        /// </summary>
+        /// <param name="addr">New IP address to use</param>
+        public void ChangeIPAddress(IPAddress addr)
+        {
+            lock (ipLock)
+            {
+                tx_dest = new IPEndPoint(addr, 1217);
+            }
+        }
+
+        private void SendPackets(object state)
         {
             UdpClient tx_client;
             try
@@ -66,17 +77,20 @@ namespace com.andymark.crosslink
             {
                 return;
             }
-            
-            byte[] arr = enablePacket.GetBuffer();
-            tx_client.Send(arr, arr.Length, tx_dest);
 
-            arr = jaguarPacket.GetBuffer();
-            tx_client.Send(arr, arr.Length, tx_dest);
-
-            foreach (KeyValuePair<int, Canipede> canipede in canipedes)
+            lock (ipLock)
             {
-                arr = canipede.Value.GetBuffer();
+                byte[] arr = enablePacket.GetBuffer();
                 tx_client.Send(arr, arr.Length, tx_dest);
+
+                arr = jaguarPacket.GetBuffer();
+                tx_client.Send(arr, arr.Length, tx_dest);
+
+                foreach (KeyValuePair<int, Canipede> canipede in canipedes)
+                {
+                    arr = canipede.Value.GetBuffer();
+                    tx_client.Send(arr, arr.Length, tx_dest);
+                }
             }
 
             tx_client.Close();

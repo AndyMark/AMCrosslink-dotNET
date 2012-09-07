@@ -42,6 +42,15 @@ namespace com.andymark.crosslink
         }
 
         /// <summary>
+        /// Changes the Toucan IP Address.
+        /// </summary>
+        /// <param name="addr">New IP Address to use</param>
+        public void ChangeIPAddress(IPAddress addr)
+        {
+            toucan.ChangeIPAddress(addr);
+        }
+
+        /// <summary>
         /// True if we've received a packet from the robot in the last 100 milliseconds.
         /// </summary>
         public Boolean ReceivingPackets
