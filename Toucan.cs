@@ -80,16 +80,23 @@ namespace com.andymark.crosslink
 
             lock (ipLock)
             {
-                byte[] arr = enablePacket.GetBuffer();
-                tx_client.Send(arr, arr.Length, tx_dest);
-
-                arr = jaguarPacket.GetBuffer();
-                tx_client.Send(arr, arr.Length, tx_dest);
-
-                foreach (KeyValuePair<int, Canipede> canipede in canipedes)
+                try
                 {
-                    arr = canipede.Value.GetBuffer();
+                    byte[] arr = enablePacket.GetBuffer();
                     tx_client.Send(arr, arr.Length, tx_dest);
+
+                    arr = jaguarPacket.GetBuffer();
+                    tx_client.Send(arr, arr.Length, tx_dest);
+
+                    foreach (KeyValuePair<int, Canipede> canipede in canipedes)
+                    {
+                        arr = canipede.Value.GetBuffer();
+                        tx_client.Send(arr, arr.Length, tx_dest);
+                    }
+                }
+                catch (SocketException)
+                {
+                    // this can occur if the wi-fi connection goes down
                 }
             }
 
